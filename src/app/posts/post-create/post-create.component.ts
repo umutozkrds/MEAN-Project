@@ -29,14 +29,16 @@ export class PostCreateComponent implements OnInit {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         this.mode = "edit";
-        this.id = paramMap.get('id')
-        this.post = this.postService.getPost(this.id);
+        this.id = paramMap.get('id');
+        this.postService.getPost(this.id).subscribe(postData => {
+          this.post = postData;
+        });
       }
       else {
         this.mode = "create";
-        this.id = null
+        this.id = null;
       }
-    })
+    });
   }
 
   savePost(form: NgForm) {

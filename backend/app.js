@@ -37,6 +37,19 @@ app.post('/api/posts', (req, res, next) => {
   });
 });
 
+app.get('/api/posts/:id', (req, res, next) => {
+  Post.findById(req.params.id).then(post => {
+    if (post) {
+      res.status(200).json(post);
+    } else {
+      res.status(404).json({ message: 'Post not found!' });
+    }
+  })
+    .catch(error => {
+      res.status(500).json({ message: 'Fetching post failed!' });
+    });
+});
+
 app.get('/api/posts', (req, res, next) => {
   Post.find().then(data => {
     res.status(200).json({
@@ -45,7 +58,6 @@ app.get('/api/posts', (req, res, next) => {
     });
   });
 });
-
 
 app.put('/api/posts/:id', (req, res, next) => {
   const post = new Post({
@@ -59,7 +71,7 @@ app.put('/api/posts/:id', (req, res, next) => {
       message: "updated!"
     })
   })
-})
+});
 
 app.delete('/api/posts/:id', (req, res, next) => {
   Post.deleteOne({ _id: req.params.id }).then(result => {
