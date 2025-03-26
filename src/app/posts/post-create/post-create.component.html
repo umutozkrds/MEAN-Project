@@ -1,15 +1,15 @@
 <mat-card appearance="outlined" class="post-card">
-  <form action="" (submit)="addPost(postForm)" #postForm="ngForm">
+  <form action="" (submit)="savePost(postForm)" #postForm="ngForm">
     <mat-card-content>
       <mat-form-field class="full-width">
         <mat-label>Title</mat-label>
-        <input required minlength="2" matInput type="text" name="title" #title="ngModel" ngModel>
+        <input required minlength="2" matInput type="text" name="title" #title="ngModel" [ngModel]="post.title">
         <mat-error *ngIf="title.invalid">Please enter a post title</mat-error>
       </mat-form-field>
 
       <mat-form-field class="full-width">
         <mat-label>Content</mat-label>
-        <textarea required minlength="2" matInput rows="6" name="content" #content="ngModel" ngModel></textarea>
+        <textarea required minlength="2" matInput rows="6" name="content" #content="ngModel" [ngModel]="post.content"></textarea>
         <mat-error *ngIf="content.invalid">Please enter a post content</mat-error>
       </mat-form-field>
 
