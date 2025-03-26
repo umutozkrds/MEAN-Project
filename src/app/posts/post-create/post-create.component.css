@@ -20,3 +20,7 @@ button {
   width: 100%;
   max-width: 200px;
 }
+
+mat-spinner{
+  margin: auto;
+}

@@ -11,6 +11,7 @@ import { HeaderComponent } from './header/header.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { PostListComponent } from './posts/post-list/post-list.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { HttpClientModule } from '@angular/common/http';
 
 
@@ -31,6 +32,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatToolbarModule,
     MatExpansionModule,
     HttpClientModule,
+    MatProgressSpinner,
     AppRoutingModule
   ],
   providers: [

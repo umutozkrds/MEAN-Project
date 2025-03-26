@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs';
 })
 export class PostListComponent implements OnInit, OnDestroy {
   posts: Blog[] = [];
+  isLoading = false;
 
   private postsSub!: Subscription;
 
@@ -19,10 +20,11 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.postService.getPosts();
     this.postsSub = this.postService.getPostUpdateListener().subscribe((posts: Blog[]) => {
-      console.log("Gelen Postlar:", posts);
-      this.posts = posts; // Güncellenmiş postları atıyoruz
+      this.isLoading = false;
+      this.posts = posts; 
     });
   }
 

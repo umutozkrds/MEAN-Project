@@ -1,5 +1,6 @@
 <mat-card appearance="outlined" class="post-card">
-  <form action="" (submit)="savePost(postForm)" #postForm="ngForm">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form action="" (submit)="savePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
     <mat-card-content>
       <mat-form-field class="full-width">
         <mat-label>Title</mat-label>
