@@ -9,28 +9,35 @@ import { title } from "node:process";
 })
 export class PostService {
   private posts: Blog[] = [];
-  private postsUpdated = new BehaviorSubject<Blog[]>(this.posts);
+  private postsUpdated = new BehaviorSubject<{ posts: Blog[], sumPosts: number }>({ posts: [], sumPosts: 0 });
 
   constructor(private http: HttpClient) { }
 
   getPosts(pageSize: number, currentPage: number) {
     const queryParams = `?pageSize=${pageSize}&page=${currentPage}`
-    this.http.get<{ message: string, posts: any }>('http://localhost:3000/api/posts'+ queryParams)
+    this.http.get<{ message: string, posts: any, sumPost: number }>('http://localhost:3000/api/posts' + queryParams)
       .pipe(
         map((postData) => {
-          return postData.posts.map((post: any) => {
-            return {
-              title: post.title,
-              content: post.content,
-              id: post._id,
-              imagePath: post.imagePath
-            };
-          });
+          return {
+            posts: postData.posts.map((post: any) => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath
+              };
+            }),
+            sumPosts: postData.sumPost
+          };
         })
       )
-      .subscribe((postData) => {
-        this.posts = postData;
-        this.postsUpdated.next([...this.posts]);
+      .subscribe((transformedPostData) => {
+        this.posts = transformedPostData.posts;
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          sumPosts: transformedPostData.sumPosts
+        });
+        console.log(transformedPostData);
       });
   }
 
@@ -69,17 +76,7 @@ export class PostService {
     }
     this.http.put<{ message: string, post: Blog }>('http://localhost:3000/api/posts/' + id, postData)
       .subscribe(response => {
-        const updatedPosts = [...this.posts];
-        const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
-        const post: Blog = {
-          id: id,
-          title: title,
-          content: content,
-          imagePath: response.post.imagePath
-        };
-        updatedPosts[oldPostIndex] = post;
-        this.posts = updatedPosts;
-        this.postsUpdated.next([...this.posts]);
+
       });
   }
 
@@ -90,23 +87,11 @@ export class PostService {
     postData.append("image", image);
     this.http.post<{ message: string, post: Blog }>('http://localhost:3000/api/posts', postData)
       .subscribe((responseData) => {
-        const post: Blog = {
-          id: responseData.post.id,
-          title: title,
-          content: content,
-          imagePath: responseData.post.imagePath
-        };
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
+
       });
   }
 
   deletePost(postId: string) {
-    this.http.delete("http://localhost:3000/api/posts/" + postId)
-      .subscribe(() => {
-        this.posts = this.posts.filter(post => post.id !== postId);
-        this.postsUpdated.next([...this.posts]);
-        console.log("deleted!");
-      });
+    return this.http.delete("http://localhost:3000/api/posts/" + postId)
   }
 }
