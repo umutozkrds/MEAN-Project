@@ -22,7 +22,7 @@ export class PostService {
               title: post.title,
               content: post.content,
               id: post._id,
-              imagePath : post.imagePath
+              imagePath: post.imagePath
             };
           });
         })
@@ -38,34 +38,48 @@ export class PostService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string, title: string, content: string }>('http://localhost:3000/api/posts/' + id)
+    return this.http.get<{ _id: string, title: string, content: string, image: string }>('http://localhost:3000/api/posts/' + id)
       .pipe(
         map(postData => {
           return {
             id: postData._id,
             title: postData.title,
-            content: postData.content
+            content: postData.content,
+            imagePath: postData.image
           };
         })
       );
   }
 
-  updatePost(id: string, title: string, content: string) {
-    const post: Blog = {
-      id: id,
-      title: title,
-      content: content,
-      imagePath : null
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    let postData: FormData | Blog;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append("title", title);
+      postData.append("content", content);
+      postData.append("image", image, title);
+    } else {
+      postData = {
+        id: id,
+        title: title,
+        content: content,
+        imagePath: image
+      };
     }
-    this.http.put('http://localhost:3000/api/posts/' + id, post).subscribe(
-      result => {
+    this.http.put<{ message: string, post: Blog }>('http://localhost:3000/api/posts/' + id, postData)
+      .subscribe(response => {
         const updatedPosts = [...this.posts];
         const oldPostIndex = updatedPosts.findIndex(p => p.id === id);
+        const post: Blog = {
+          id: id,
+          title: title,
+          content: content,
+          imagePath: response.post.imagePath
+        };
         updatedPosts[oldPostIndex] = post;
         this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
-      }
-    )
+      });
   }
 
   addPost(title: string, content: string, image: File) {
@@ -79,7 +93,7 @@ export class PostService {
           id: responseData.post.id,
           title: title,
           content: content,
-          imagePath : responseData.post.imagePath
+          imagePath: responseData.post.imagePath
         };
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);

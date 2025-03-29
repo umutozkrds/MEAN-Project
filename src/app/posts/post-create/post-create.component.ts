@@ -18,7 +18,7 @@ export class PostCreateComponent implements OnInit {
   imagePreview: string = "";
   mode: string = "create";
   id: any = "";
-  post: Blog = { id: '', title: '', content: '', imagePath : null};
+  post: Blog = { id: '', title: '', content: '', imagePath: null };
   isLoading = false;
 
 
@@ -54,12 +54,14 @@ export class PostCreateComponent implements OnInit {
             id: postData.id,
             title: postData.title,
             content: postData.content,
-            imagePath : null
+            imagePath: postData.imagePath
           }
-          this.form.setValue({
+          this.form.patchValue({
             title: this.post.title,
-            content: this.post.content
+            content: this.post.content,
+            image: this.post.imagePath
           });
+          this.imagePreview = this.post.imagePath || '';
         });
       }
       else {
@@ -100,7 +102,8 @@ export class PostCreateComponent implements OnInit {
       this.postService.updatePost(
         this.id,
         this.form.value.title,
-        this.form.value.content
+        this.form.value.content,
+        this.form.value.image
       );
     }
     this.router.navigate(['/']);
