@@ -13,6 +13,8 @@ import { PostListComponent } from './posts/post-list/post-list.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { HttpClientModule } from '@angular/common/http';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 
 @NgModule({
@@ -33,7 +35,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatExpansionModule,
     HttpClientModule,
     MatProgressSpinner,
-    AppRoutingModule
+    AppRoutingModule,
+    MatIconModule,
+    MatPaginatorModule
   ],
   providers: [
     provideClientHydration(withEventReplay())

@@ -13,8 +13,9 @@ export class PostService {
 
   constructor(private http: HttpClient) { }
 
-  getPosts() {
-    this.http.get<{ message: string, posts: any }>('http://localhost:3000/api/posts')
+  getPosts(pageSize: number, currentPage: number) {
+    const queryParams = `?pageSize=${pageSize}&page=${currentPage}`
+    this.http.get<{ message: string, posts: any }>('http://localhost:3000/api/posts'+ queryParams)
       .pipe(
         map((postData) => {
           return postData.posts.map((post: any) => {
