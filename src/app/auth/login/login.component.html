@@ -1,0 +1,19 @@
+<mat-card appearance="outlined" class="post-card">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form *ngIf="!isLoading">
+    <mat-card-content>
+      <mat-form-field class="full-width">
+        <input matInput type="email" name="title" placeholder="Email">
+        <mat-error *ngIf="">Please enter a vslid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="password" name="" id="" placeholder="Password">
+        <mat-error *ngIf="">Please enter a valid password</mat-error>
+      </mat-form-field>
+      <div class="button-container">
+        <button mat-raised-button color="primary" type="submit">Log in</button>
+      </div>
+    </mat-card-content>
+  </form>
+</mat-card>
