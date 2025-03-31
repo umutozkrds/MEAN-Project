@@ -1,12 +1,15 @@
 const express = require('express');
 const path = require('path')
 const mongoose = require('mongoose')
-const postRouters = require("./router/posts")
+
 const bodyParser = require('body-parser');
 
 const { title } = require('process');
 
-mongoose.connect("mongodb+srv://umuttozkardes:QQKN19ExH8tIXvvL@cluster0.1vwjv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+const postRouters = require("./router/posts")
+const userRouters= require("./router/user")
+
+mongoose.connect("mongodb+srv://umuttozkardes:QQKN19ExH8tIXvvL@cluster0.1vwjv.mongodb.net/?w=majority&appName=Cluster0")
   .then(() => {
     console.log("Connection is success")
   })
@@ -27,6 +30,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/posts", postRouters)
+app.use("/api/user", userRouters)
+
 app.use("/images", express.static(path.join("backend/images")));
 
 module.exports = app;
