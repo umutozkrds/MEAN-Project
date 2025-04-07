@@ -2,7 +2,9 @@ import { Injectable } from "@angular/core";
 import { Blog } from "../models/blog.model";
 import { BehaviorSubject, map, Observable, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { title } from "node:process";
+import { environment } from "../../environments/environments";
+
+const BACKEND_URL = environment.apiUrl + '/posts';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,7 @@ export class PostService {
     this.currentPage = currentPage;
     this.pageSize = pageSize;
     const queryParams = `?pageSize=${pageSize}&page=${currentPage}`
-    this.http.get<{ message: string, posts: any, sumPost: number }>('http://localhost:3000/api/posts' + queryParams)
+    this.http.get<{ message: string, posts: any, sumPost: number }>(BACKEND_URL + queryParams)
       .pipe(
         map((postData) => {
           return {
@@ -50,7 +52,7 @@ export class PostService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>('http://localhost:3000/api/posts/' + id)
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(BACKEND_URL + '/' + id)
       .pipe(
         map(postData => {
           return {
@@ -80,7 +82,7 @@ export class PostService {
         creator: undefined
       };
     }
-    this.http.put<{ message: string }>('http://localhost:3000/api/posts/' + id, postData)
+    this.http.put<{ message: string }>(BACKEND_URL + '/' + id, postData)
       .subscribe(response => {
         if (response.message === "updated!") {
           this.getPosts(this.pageSize, this.currentPage);
@@ -93,7 +95,7 @@ export class PostService {
     postData.append("title", title);
     postData.append("content", content);
     postData.append("image", image);
-    this.http.post<{ message: string, post: any }>('http://localhost:3000/api/posts', postData)
+    this.http.post<{ message: string, post: any }>(BACKEND_URL, postData)
       .subscribe((responseData) => {
         // After successfully adding the post, refresh the current page
         this.getPosts(this.pageSize, this.currentPage);
@@ -101,6 +103,6 @@ export class PostService {
   }
 
   deletePost(postId: string) {
-    return this.http.delete("http://localhost:3000/api/posts/" + postId);
+    return this.http.delete(BACKEND_URL + '/' + postId);
   }
 }

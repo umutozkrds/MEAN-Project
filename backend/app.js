@@ -9,7 +9,10 @@ const { title } = require('process');
 const postRouters = require("./router/posts")
 const userRouters= require("./router/user")
 
-mongoose.connect("mongodb+srv://umuttozkardes:QQKN19ExH8tIXvvL@cluster0.1vwjv.mongodb.net/?w=majority&appName=Cluster0")
+const dotenv = require('dotenv');
+dotenv.config();
+
+mongoose.connect("mongodb+srv://umuttozkardes:QQKN19ExH8tIXvvL@cluster0.1vwjv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
   .then(() => {
     console.log("Connection is success")
   })
