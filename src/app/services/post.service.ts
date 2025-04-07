@@ -10,10 +10,14 @@ import { title } from "node:process";
 export class PostService {
   private posts: Blog[] = [];
   private postsUpdated = new BehaviorSubject<{ posts: Blog[], sumPosts: number }>({ posts: [], sumPosts: 0 });
+  private currentPage = 1;
+  private pageSize = 2;
 
   constructor(private http: HttpClient) { }
 
   getPosts(pageSize: number, currentPage: number) {
+    this.currentPage = currentPage;
+    this.pageSize = pageSize;
     const queryParams = `?pageSize=${pageSize}&page=${currentPage}`
     this.http.get<{ message: string, posts: any, sumPost: number }>('http://localhost:3000/api/posts' + queryParams)
       .pipe(
@@ -24,7 +28,8 @@ export class PostService {
                 title: post.title,
                 content: post.content,
                 id: post._id,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               };
             }),
             sumPosts: postData.sumPost
@@ -37,7 +42,6 @@ export class PostService {
           posts: [...this.posts],
           sumPosts: transformedPostData.sumPosts
         });
-        console.log(transformedPostData);
       });
   }
 
@@ -46,14 +50,15 @@ export class PostService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string, title: string, content: string, image: string }>('http://localhost:3000/api/posts/' + id)
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>('http://localhost:3000/api/posts/' + id)
       .pipe(
         map(postData => {
           return {
             id: postData._id,
             title: postData.title,
             content: postData.content,
-            imagePath: postData.image
+            imagePath: postData.imagePath,
+            creator: postData.creator
           };
         })
       );
@@ -71,12 +76,15 @@ export class PostService {
         id: id,
         title: title,
         content: content,
-        imagePath: image
+        imagePath: image,
+        creator: undefined
       };
     }
-    this.http.put<{ message: string, post: Blog }>('http://localhost:3000/api/posts/' + id, postData)
+    this.http.put<{ message: string }>('http://localhost:3000/api/posts/' + id, postData)
       .subscribe(response => {
-
+        if (response.message === "updated!") {
+          this.getPosts(this.pageSize, this.currentPage);
+        }
       });
   }
 
@@ -85,13 +93,14 @@ export class PostService {
     postData.append("title", title);
     postData.append("content", content);
     postData.append("image", image);
-    this.http.post<{ message: string, post: Blog }>('http://localhost:3000/api/posts', postData)
+    this.http.post<{ message: string, post: any }>('http://localhost:3000/api/posts', postData)
       .subscribe((responseData) => {
-
+        // After successfully adding the post, refresh the current page
+        this.getPosts(this.pageSize, this.currentPage);
       });
   }
 
   deletePost(postId: string) {
-    return this.http.delete("http://localhost:3000/api/posts/" + postId)
+    return this.http.delete("http://localhost:3000/api/posts/" + postId);
   }
 }

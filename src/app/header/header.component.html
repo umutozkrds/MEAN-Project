@@ -4,18 +4,21 @@
   </span>
   <span class="spacer"></span>
   <ul>
-    <li *ngIf="userIsAuthenticated">
-      <a class="nav-link" routerLink="/create">Create Post</a>
-    </li>
-    <li *ngIf="userIsAuthenticated">
-      <button class="nav-link" (click)="onLogout()">Logout</button>
-    </li>
-    <li *ngIf="!userIsAuthenticated">
-      <a class="nav-link" routerLink="/login">Log in</a>
-    </li>
-    <li *ngIf="!userIsAuthenticated">
-      <a class="nav-link" routerLink="/signup">Sign up</a>
-    </li>
-    
+    <div style="display: flex;" *ngIf="userIsAuthenticated">
+        <li>
+        <a class="nav-link" routerLink="/create">Create Post</a>
+      </li>
+      <li>
+        <button class="nav-link" (click)="onLogout()">Logout</button>
+      </li>
+    </div>
+    <div style="display: flex;" *ngIf="!userIsAuthenticated">
+        <li>
+        <a class="nav-link" routerLink="/login">Log in</a>
+      </li>
+      <li>
+        <a class="nav-link" routerLink="/signup">Sign up</a>
+      </li>
+    </div>
   </ul>
 </mat-toolbar>
